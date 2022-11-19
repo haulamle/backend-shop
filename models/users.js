@@ -31,7 +31,8 @@ const Users = db.define('users', {
     },
     status: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        defaultValue : 'Hoạt Động'
     },
     role: {
         type: DataTypes.INTEGER,
