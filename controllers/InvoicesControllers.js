@@ -1,45 +1,21 @@
 
 const invoices = require('../models/invoices')
+const db = require('../models/db')
 const { Op } = require("sequelize");
 class InvoicesControllers {
 
-    // [GET] /invoices ?search?page?limit
+    // [GET] /invoices
     async getAll(req, res){
       try{
-        const search = req.query.q
         let page = 1 
         const limit = req.query.limit
         page = (req.query.page - 1) * limit
-        if(search && limit ) {
-            const {count , rows} = await invoices.findAndCountAll({ limit: parseInt(limit),
-                where: {
-                  nameReceiver: { [Op.startsWith]: `${search}` }
-                }
-            });
-          return  res.json({total:count,data:rows})
-        } 
-        if(page && limit ) {
-            const {count , rows} = await invoices.findAndCountAll({ offset: parseInt(page), limit: parseInt(limit)});
-          return  res.json({total:count,data:rows})
-        } 
-        if(search ) {
-          const {count , rows} = await invoices.findAndCountAll({ 
-                where: {
-                  nameReceiver: { [Op.startsWith]: `${search}` }
-                }
-            });
-          return  res.json({total:count,data:rows})
-        } 
-        if(limit) {
-            const {count , rows} = await invoices.findAndCountAll({ limit: parseInt(0)});
-           return res.json({total:count,data:rows})
-        }
-        else {
-            const {count , rows} = await invoices.findAndCountAll();
-          return res.json({total:count,data:rows})
-        }
+          const [results, metadata] = await db.query(
+            "SELECT * FROM invoices JOIN Invoicesdetail ON invoices.idHD = Invoicesdetail.idHD"
+          );
+          return res.json(results, null, 2);
       }catch(err) {
-        console.log("lỗi")
+        console.log(err)
       }
     }
     // [GET] /invoices
@@ -53,6 +29,7 @@ class InvoicesControllers {
           console.log("lỗi")
         }
       }
+
   
     // [DELETE] /invoices/id
     async delete(req, res){
@@ -69,9 +46,10 @@ class InvoicesControllers {
     async add(req, res){
         try{
           await invoices.create({
+            idHD : req.body.idHD,
             idUser : req.body.idUser,
             status: req.body.status,
-            url: req.body.url,
+            note: req.body.note,
             name: req.body.name,
             nameReceiver: req.body.nameReceiver,
             addressReceiver: req.body.addressReceiver,
@@ -82,16 +60,17 @@ class InvoicesControllers {
           });
           res.send("succesfully !!!")
         }catch(err) {
-          console.log("lỗi")
+          console.log(err)
         }
-      }
+    }
     // [PUT] /invoices/id
     async update(req, res){
         try{
           await invoices.update({
+            idHD : req.body.idHD,
             idUser: req.body.idUser,
             status: req.body.status,
-            url: req.body.url,
+            note: req.body.note,
             name: req.body.name,
             nameReceiver: req.body.nameReceiver,
             addressReceiver: req.body.addressReceiver,
@@ -107,7 +86,7 @@ class InvoicesControllers {
         }catch(err) {
           console.log("lỗi")
         }
-      }
+    }
 }
 
 module.exports = new InvoicesControllers
