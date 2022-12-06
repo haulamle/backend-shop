@@ -4,6 +4,8 @@ const db = new Sequelize(process.env.DATA_BASE, 'root', '', {
   dialect:  'mysql' 
 });
 
+
+
 db.authenticate().then(() => {
   console.log('Connection has been established successfully.');
 }).catch((error) => {

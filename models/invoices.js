@@ -17,15 +17,15 @@ const Invoices = db.define('invoices', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    url: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
     name: {
         type: DataTypes.STRING,
         allowNull: false
       },
     nameReceiver: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    note: {
         type: DataTypes.STRING,
         allowNull: false
     },
